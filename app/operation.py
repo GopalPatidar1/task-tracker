@@ -75,9 +75,3 @@ class Operation:
 
         with open(self.filename, "w") as file:
              json.dump(filterTask, file, indent=4)
-
-op = Operation()
-
-
-
-

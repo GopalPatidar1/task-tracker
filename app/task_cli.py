@@ -1,6 +1,7 @@
 import sys
 from app.constant import COMMAND, RESULT
-from app.operation import op
+from app.operation import Operation
+from app.constant import FILENAME
 from app.customException import CustomException
 
 
@@ -33,7 +34,9 @@ def guide():
 
 
 
-def main():
+def main(fileName = None):
+    op = Operation(fileName or FILENAME)
+
     arguments = sys.argv[1:]  # remove the first because it contain file name
 
     if not arguments:
@@ -77,7 +80,7 @@ def main():
      
          op.deleteTask(id)
 
-         return RESULT["TASK_ADDED"](id)
+         return RESULT["TASK_DELETED"](id)
 
     elif command == COMMAND['UPDATE']:
          if len(arguments) != 3:
