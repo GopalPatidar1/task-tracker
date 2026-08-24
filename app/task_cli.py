@@ -1,33 +1,33 @@
 import sys
-from constant import COMMAND
-from operation import op
-from customException import CustomException
+from app.constant import COMMAND, RESULT
+from app.operation import op
+from app.customException import CustomException
 
 
 def guide():
     print(
         """
     Adding a new task
-       add "Buy groceries"
+       python -m app.task_cli add "Buy groceries"
        Output: Task added successfully (ID: 1)
      
     Updating and deleting tasks
-      update 1 "Buy groceries and cook dinner"
+      python -m app.task_cli update 1 "Buy groceries and cook dinner"
 
     Updating and deleting tasks
-      delete 1
+      python -m app.task_cli delete 1
       
     Marking a task as in progress or done
-      mark-in-progress 1
-      mark-done 1
+      python -m app.task_cli mark-in-progress 1
+      python -m app.task_cli mark-done 1
       
     Listing all tasks
-      list
+      python -m app.task_cli list
       
     Listing tasks by status
-      list done
-      list todo
-      list inprogress
+      python -m app.task_cli list done
+      python -m app.task_cli list todo
+      python -m app.task_cli list inprogress
     """
     )
 
@@ -38,12 +38,12 @@ def main():
 
     if not arguments:
       guide()
-      return
+      return RESULT["NO_ARGUMENTS"]()
 
     command = arguments[0]
     if command ==COMMAND["ADD"]:
         if len(arguments) != 2:
-           raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.")
+           raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.", show_guide=True)
            
     
         desc = arguments[1].strip()
@@ -54,7 +54,7 @@ def main():
         getTaskId = op.getTaskId()
     
         op.addTask({"desc":desc, "id":getTaskId, "status": "todo"})
-        return f"Task added successfully (ID: {getTaskId})"
+        return RESULT["TASK_ADDED"](getTaskId)
     
     elif command == COMMAND["LIST"]:
          listOfTask = op.getListOfTask()
@@ -68,7 +68,7 @@ def main():
     
     elif command == COMMAND["DELETE"]:
          if len(arguments) != 2:
-                raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.")
+                raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.", show_guide=True)
      
          id = arguments[1]
      
@@ -77,11 +77,11 @@ def main():
      
          op.deleteTask(id)
 
-         return f"Task deleted successfully (ID: {id})"
+         return RESULT["TASK_ADDED"](id)
 
     elif command == COMMAND['UPDATE']:
          if len(arguments) != 3:
-             raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.")
+             raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.", show_guide=True)
      
          id = arguments[1]
          if not id:
@@ -93,11 +93,11 @@ def main():
      
          op.updateTask(id, desc)
 
-         return f"Task updated successfully (ID: {id})"
+         return RESULT["TASK_UPDATED"](id)
 
     elif command == COMMAND["MARK_IN_PROGRESS"]:
          if len(arguments) != 2:
-               raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.")
+               raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.", show_guide=True)
              
          id = arguments[1]
          if not id:
@@ -105,25 +105,27 @@ def main():
    
          op.markInProgress(id)
 
-         return f"Task updated successfully (ID: {id})"
+         return RESULT["TASK_UPDATED"](id)
 
     elif command == COMMAND["MARK_DONE"]:
          if len(arguments) != 2:
-               raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.")
+               raise CustomException("Incorrect syntax. Please refer to the user guide for correct usage.", show_guide=True)
              
          id = arguments[1]
          if not id:
             raise CustomException("task id can't be empty")
          op.markDone(id)
 
-         return f"Task updated successfully (ID: {id})"
+         return RESULT["TASK_UPDATED"](id)
     else:
-       raise CustomException("Unknown command. Please refer to the user guide.")
-      
-try:
-    print(main())
-except CustomException as e:
-    guide()
-    print(e)
-except Exception as e:
-    print("Something went wrong:", e)
+       raise CustomException("Unknown command. Please refer to the user guide.", show_guide=True)
+
+if __name__ == "__main__":   
+     try:
+         print(main())
+     except CustomException as e:
+         if e.show_guide:
+          guide()
+         print(e)
+     except Exception as e:
+         print("Something went wrong:", e)
