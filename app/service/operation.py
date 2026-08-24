@@ -1,6 +1,6 @@
 import json
-from app.customException import CustomException
-from app.constant import FILENAME
+from app.customException.customException import CustomException
+from app.core.constant import FILENAME
 
 class Operation:
     def __init__(self, filename=FILENAME):

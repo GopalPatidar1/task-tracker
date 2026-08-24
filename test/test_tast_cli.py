@@ -1,7 +1,7 @@
 import sys
 from unittest.mock import patch
-from app.task_cli import main
-from app.constant import RESULT
+from app.cli.task import main
+from app.core.constant import RESULT
 from pathlib import Path
 import pytest
 
